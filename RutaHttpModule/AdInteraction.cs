@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.DirectoryServices;
 using System.DirectoryServices.AccountManagement;
+using System.DirectoryServices.ActiveDirectory;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,7 +11,7 @@ using System.Threading.Tasks;
 namespace RutaHttpModule
 {
     internal class AdInteraction : IAdInteraction
-    {
+    {        
         private readonly ISettings settings;
 
         [ExcludeFromCodeCoverage]
@@ -24,7 +26,7 @@ namespace RutaHttpModule
         {
             if (string.IsNullOrWhiteSpace(domainUsername)) throw new ArgumentNullException(nameof(domainUsername));
 
-            string usernameOnly = RemoveDomain(domainUsername);
+            string usernameOnly = domainUsername.RemoveDomain();
 
             string login = null, name = null, email = null;
             string[] groups = null;
@@ -40,22 +42,11 @@ namespace RutaHttpModule
                 login = usernameOnly;
                 name = user.Name;
                 email = user.EmailAddress;
-                groups = user.GetAuthorizationGroups()?.Where(FilterGroup).Select(x => x.Name).ToArray();
+                groups = user.GetGroupsFast(this.settings.AdUserBaseDn, this.settings.AdGroupBaseDn).ToArray();
             }
                 return (login, name, email, groups);
         }
 
-        private bool FilterGroup(Principal principal) => principal.DistinguishedName?.EndsWith(this.settings.AdGroupBaseDn, StringComparison.OrdinalIgnoreCase) ?? false;
-
-        private static string RemoveDomain(string domainUsername)
-        {
-            string[] parts = domainUsername.Split('\\');
-            if (parts.Length != 2)
-            {
-                return domainUsername;
-            }
-
-            return parts[1];
-        }
+        
     }
 }
