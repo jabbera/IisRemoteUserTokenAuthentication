@@ -14,7 +14,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "runsettings", "runsettings"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0BCA4263-3544-4706-BFCB-664DEACB36EC}"
 	ProjectSection(SolutionItems) = preProject
-		InstallArr.ps1 = InstallArr.ps1
+		InstallRutaModule.ps1 = InstallRutaModule.ps1
 		web.config = web.config
 	EndProjectSection
 EndProject
