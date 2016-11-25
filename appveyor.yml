@@ -17,11 +17,21 @@ before_build:
   - nuget restore
   
 platform: Any CPU
-
 configuration: Release
 
+after_build:
+  - 7z a RutaHttpModule.zip "%APPVEYOR_BUILD_FOLDER%\RutaHttpModule\bin\$(configuration)\*.dll" "%APPVEYOR_BUILD_FOLDER%\web-*.config" "%APPVEYOR_BUILD_FOLDER%\InstallRutaModule.ps1"
+
 artifacts:
-  - path: RutaHttpModule\bin\$(configuration)\*.dll
-  - path: web-user.config
-  - path: web-runner.config
-  - path: InstallRutaModule.ps1
+  - path: RutaHttpModule.zip
+    name: RutaHttpModule
+
+deploy:
+  release: RutaHttpModule-v$(appveyor_build_version)
+  provider: GitHub
+  
+  draft: true
+  prerelease: true
+  on:
+    branch: master
+    appveyor_repo_tag: true
