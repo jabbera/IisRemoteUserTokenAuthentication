@@ -19,8 +19,9 @@ before_build:
 platform: Any CPU
 configuration: Release
 
-test: assemblies:
-  - '**\RutaHttpModuleTest.dll'
+test: 
+  assemblies:
+    - '**\RutaHttpModuleTest.dll'
   categories:
     except:
       - ActiveDirectoryRequired
