@@ -8,6 +8,6 @@ namespace RutaHttpModule
 {
     internal interface IAdInteraction
     {
-        (string login, string name, string email, string[] groups) GetUserInformation(string domainUsername);
+        (string login, string name, string email, IEnumerable<string> groups) GetUserInformation(string domainUsername);
     }
 }

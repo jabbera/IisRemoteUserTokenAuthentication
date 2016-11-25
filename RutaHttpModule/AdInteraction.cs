@@ -22,7 +22,7 @@ namespace RutaHttpModule
 
         internal AdInteraction(ISettings settings) => this.settings = settings ?? throw new ArgumentNullException(nameof(settings));
 
-        public (string login, string name, string email, string[] groups) GetUserInformation(string domainUsername)
+        public (string login, string name, string email, IEnumerable<string> groups) GetUserInformation(string domainUsername)
         {
             if (string.IsNullOrWhiteSpace(domainUsername)) throw new ArgumentNullException(nameof(domainUsername));
 
@@ -39,38 +39,13 @@ namespace RutaHttpModule
                     return (login, name, email, groups);
                 }
 
-                login = AppendIfNedded(usernameOnly);
+                login = usernameOnly;
                 name = user.Name;
                 email = user.EmailAddress;
-                groups = user.GetGroupsFast(this.settings.AdUserBaseDn, this.settings.AdGroupBaseDn).Select(DowncaseIfNedded).Select(AppendIfNedded).ToArray();
-
-                if (this.settings.DowncaseUsers)
-                {
-                    login = login?.ToLower();
-                }
+                groups = user.GetGroupsFast(this.settings.AdUserBaseDn, this.settings.AdGroupBaseDn).ToArray();
             }
 
             return (login, name, email, groups);
-        }
-
-        private string DowncaseIfNedded(string s)
-        {
-            if (!this.settings.DowncaseGroups)
-            {
-                return s;
-            }
-
-            return s?.ToLower();
-        }
-
-        private string AppendIfNedded(string s)
-        {
-            if (string.IsNullOrWhiteSpace(this.settings.AppendString) || string.IsNullOrWhiteSpace(s))
-            {
-                return s;
-            }
-
-            return $"{s}{this.settings.AppendString}";
         }
     }
 }

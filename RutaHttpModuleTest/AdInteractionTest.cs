@@ -4,9 +4,11 @@ using RutaHttpModule;
 using System.Security.Principal;
 using System.Text.RegularExpressions;
 using Moq;
+using System.Linq;
 
 namespace RutaHttpModuleTest
 {
+    [TestCategory("ActiveDirectoryRequired")]
     [TestClass]
     public class AdInteractionTest
     {
@@ -43,7 +45,7 @@ namespace RutaHttpModuleTest
             Assert.IsTrue(WindowsIdentity.GetCurrent().Name.EndsWith(result.login, StringComparison.Ordinal));
             Assert.IsNotNull(result.name);
             Assert.IsTrue(emailRegex.IsMatch(result.email));
-            Assert.IsTrue(result.groups?.Length >= 0);
+            Assert.IsTrue(result.groups?.Count()>= 0);
         }
 
         [TestMethod]
@@ -75,7 +77,7 @@ namespace RutaHttpModuleTest
             Assert.IsTrue(WindowsIdentity.GetCurrent().Name.EndsWith(result.login, StringComparison.Ordinal));
             Assert.IsNotNull(result.name);
             Assert.IsTrue(emailRegex.IsMatch(result.email));
-            CollectionAssert.DoesNotContain(result.groups, "Domain Users");
+            CollectionAssert.DoesNotContain(result.groups.ToArray(), "Domain Users");
         }
 
         [TestMethod]
@@ -85,19 +87,6 @@ namespace RutaHttpModuleTest
             var result = this.adInteraction.GetUserInformation(WindowsIdentity.GetCurrent().Name);
 
             Assert.IsNull(result.login);
-        }
-
-        [TestMethod]
-        public void AppendStringTest()
-        {
-            string extraTest = "@domain";
-            string expectedOutput = $"{WindowsIdentity.GetCurrent().Name}{extraTest}";
-
-            this.settings.SetupGet(x => x.AppendString).Returns(extraTest);
-
-            var result = this.adInteraction.GetUserInformation(WindowsIdentity.GetCurrent().Name);
-
-            Assert.IsTrue(expectedOutput.EndsWith(result.login, StringComparison.OrdinalIgnoreCase));
-        }
+        }        
     }
 }
