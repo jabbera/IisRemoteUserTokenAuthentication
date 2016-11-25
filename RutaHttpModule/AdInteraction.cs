@@ -39,14 +39,38 @@ namespace RutaHttpModule
                     return (login, name, email, groups);
                 }
 
-                login = usernameOnly;
+                login = AppendIfNedded(usernameOnly);
                 name = user.Name;
                 email = user.EmailAddress;
-                groups = user.GetGroupsFast(this.settings.AdUserBaseDn, this.settings.AdGroupBaseDn).ToArray();
+                groups = user.GetGroupsFast(this.settings.AdUserBaseDn, this.settings.AdGroupBaseDn).Select(DowncaseIfNedded).Select(AppendIfNedded).ToArray();
+
+                if (this.settings.DowncaseUsers)
+                {
+                    login = login?.ToLower();
+                }
             }
-                return (login, name, email, groups);
+
+            return (login, name, email, groups);
         }
 
-        
+        private string DowncaseIfNedded(string s)
+        {
+            if (!this.settings.DowncaseGroups)
+            {
+                return s;
+            }
+
+            return s?.ToLower();
+        }
+
+        private string AppendIfNedded(string s)
+        {
+            if (string.IsNullOrWhiteSpace(this.settings.AppendString) || string.IsNullOrWhiteSpace(s))
+            {
+                return s;
+            }
+
+            return $"{s}{this.settings.AppendString}";
+        }
     }
 }

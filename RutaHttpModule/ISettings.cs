@@ -12,7 +12,9 @@ namespace RutaHttpModule
         string NameHeader { get; }
         string EmailHeader { get; }
         string GroupsHeader { get; }
-        bool Downcase { get; }
+        bool DowncaseUsers { get; }
+        bool DowncaseGroups { get; }
+        string AppendString { get; }
         string AdUserBaseDn { get; }
         string AdGroupBaseDn { get; }
     }

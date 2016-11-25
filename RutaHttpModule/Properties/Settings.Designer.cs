@@ -62,9 +62,9 @@ namespace RutaHttpModule.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool Downcase {
+        public bool DowncaseUsers {
             get {
-                return ((bool)(this["Downcase"]));
+                return ((bool)(this["DowncaseUsers"]));
             }
         }
         
@@ -83,6 +83,24 @@ namespace RutaHttpModule.Properties {
         public string AdGroupBaseDn {
             get {
                 return ((string)(this["AdGroupBaseDn"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool DowncaseGroups {
+            get {
+                return ((bool)(this["DowncaseGroups"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string AppendString {
+            get {
+                return ((string)(this["AppendString"]));
             }
         }
     }

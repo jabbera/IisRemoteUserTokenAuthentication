@@ -21,7 +21,9 @@ namespace RutaHttpModuleTest
             this.settings = new Mock<ISettings>();
             this.settings.SetupGet(x => x.AdGroupBaseDn).Returns(string.Empty);
             this.settings.SetupGet(x => x.AdUserBaseDn).Returns(string.Empty);
-            this.settings.SetupGet(x => x.Downcase).Returns(true);
+            this.settings.SetupGet(x => x.DowncaseUsers).Returns(true);
+            this.settings.SetupGet(x => x.DowncaseGroups).Returns(true);
+            this.settings.SetupGet(x => x.AppendString).Returns(string.Empty);
 
             this.adInteraction = new AdInteraction(this.settings.Object);
         }
@@ -38,7 +40,7 @@ namespace RutaHttpModuleTest
         {
             var result = this.adInteraction.GetUserInformation(WindowsIdentity.GetCurrent().Name);
 
-            Assert.IsTrue(WindowsIdentity.GetCurrent().Name.EndsWith(result.login, StringComparison.OrdinalIgnoreCase));
+            Assert.IsTrue(WindowsIdentity.GetCurrent().Name.EndsWith(result.login, StringComparison.Ordinal));
             Assert.IsNotNull(result.name);
             Assert.IsTrue(emailRegex.IsMatch(result.email));
             Assert.IsTrue(result.groups?.Length >= 0);
@@ -62,7 +64,7 @@ namespace RutaHttpModuleTest
         public void DefaultNoDomainTest()
         {
             var result = this.adInteraction.GetUserInformation(WindowsIdentity.GetCurrent().Name.Split('\\')[1]);
-            Assert.IsTrue(WindowsIdentity.GetCurrent().Name.EndsWith(result.login, StringComparison.OrdinalIgnoreCase));
+            Assert.IsTrue(WindowsIdentity.GetCurrent().Name.EndsWith(result.login, StringComparison.Ordinal));
         }
 
         [TestMethod]
@@ -70,7 +72,7 @@ namespace RutaHttpModuleTest
         {
             var result = this.adInteraction.GetUserInformation(WindowsIdentity.GetCurrent().Name);
 
-            Assert.IsTrue(WindowsIdentity.GetCurrent().Name.EndsWith(result.login, StringComparison.OrdinalIgnoreCase));
+            Assert.IsTrue(WindowsIdentity.GetCurrent().Name.EndsWith(result.login, StringComparison.Ordinal));
             Assert.IsNotNull(result.name);
             Assert.IsTrue(emailRegex.IsMatch(result.email));
             CollectionAssert.DoesNotContain(result.groups, "Domain Users");
@@ -83,6 +85,19 @@ namespace RutaHttpModuleTest
             var result = this.adInteraction.GetUserInformation(WindowsIdentity.GetCurrent().Name);
 
             Assert.IsNull(result.login);
+        }
+
+        [TestMethod]
+        public void AppendStringTest()
+        {
+            string extraTest = "@domain";
+            string expectedOutput = $"{WindowsIdentity.GetCurrent().Name}{extraTest}";
+
+            this.settings.SetupGet(x => x.AppendString).Returns(extraTest);
+
+            var result = this.adInteraction.GetUserInformation(WindowsIdentity.GetCurrent().Name);
+
+            Assert.IsTrue(expectedOutput.EndsWith(result.login, StringComparison.OrdinalIgnoreCase));
         }
     }
 }
