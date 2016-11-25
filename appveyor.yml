@@ -1,2 +1,39 @@
+version: 0.0.{build}
+
+cache:
+  - packages -> **\packages.config  # preserve "packages" directory in the root of build folder but will reset it if packages.config is modified
+  - '%LocalAppData%\NuGet\Cache'
+
+image: Visual Studio 2015
+  
+assembly_info:
+  patch: true
+  file: AssemblyInfo.*
+  assembly_version: '{version}'
+  assembly_file_version: '{version}'
+  assembly_informational_version: '{version}-rc'
+  
 before_build:
   - nuget restore
+  
+platform: Any CPU
+configuration: Release
+
+after_build:
+  - 7z a RutaHttpModule.zip "%APPVEYOR_BUILD_FOLDER%\RutaHttpModule\bin\%CONFIGURATION%\*.dll" "%APPVEYOR_BUILD_FOLDER%\web-*.config" "%APPVEYOR_BUILD_FOLDER%\InstallRutaModule.ps1"
+
+artifacts:
+  - path: RutaHttpModule.zip
+    name: RutaHttpModule
+
+deploy:
+  release: $(APPVEYOR_REPO_TAG_NAME)
+  description: 'RUTA module for SSO IIS'
+  provider: GitHub
+  auth_token:
+    secure: 8T/Hl3dGYqGdE8zjaQNpklrJUCgm3QdMNnQxQvim17w+se7YUPxTeWH4qEMJyQCL
+  draft: true
+  prerelease: true
+  force_update: true
+  on:
+    appveyor_repo_tag: true
