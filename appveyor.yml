@@ -19,6 +19,12 @@ before_build:
 platform: Any CPU
 configuration: Release
 
+test: assemblies:
+  - '**\RutaHttpModuleTest.dll'
+  categories:
+    except:
+      - ActiveDirectoryRequired
+      
 after_build:
   - 7z a RutaHttpModule.zip "%APPVEYOR_BUILD_FOLDER%\RutaHttpModule\bin\%CONFIGURATION%\*.dll" "%APPVEYOR_BUILD_FOLDER%\web-*.config" "%APPVEYOR_BUILD_FOLDER%\InstallRutaModule.ps1"
 

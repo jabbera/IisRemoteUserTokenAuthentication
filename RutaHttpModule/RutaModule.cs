@@ -66,10 +66,43 @@ namespace RutaHttpModule
                 return;
             }
 
-            context.AddRequestHeader(this.settings.LoginHeader, userInformation.login);
+            string loginToSend = AppendIfNedded(DowncaseUserIfNeeded(userInformation.login));
+            string[] groupsToSend = userInformation.groups.Where(x => x != null).Select(DowncaseGroupIfNeeded).Select(AppendIfNedded).ToArray();
+
+            context.AddRequestHeader(this.settings.LoginHeader, loginToSend);
             context.AddRequestHeader(this.settings.NameHeader, userInformation.name);
             context.AddRequestHeader(this.settings.EmailHeader, userInformation.email);
-            context.AddRequestHeader(this.settings.GroupsHeader, string.Join(",", userInformation.groups));
+            context.AddRequestHeader(this.settings.GroupsHeader, string.Join(",", groupsToSend));
         }
-    }
+
+        private string DowncaseGroupIfNeeded(string s)
+        {
+            if (!this.settings.DowncaseGroups)
+            {
+                return s;
+            }
+
+            return s.ToLower();
+        }
+
+        private string DowncaseUserIfNeeded(string s)
+        {
+            if (!this.settings.DowncaseUsers)
+            {
+                return s;
+            }
+
+            return s.ToLower();
+        }
+
+        private string AppendIfNedded(string s)
+        {
+            if (string.IsNullOrWhiteSpace(this.settings.AppendString) || string.IsNullOrWhiteSpace(s))
+            {
+                return s;
+            }
+
+            return $"{s}{this.settings.AppendString}";
+        }
+    }    
 }
