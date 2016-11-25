@@ -28,8 +28,10 @@ artifacts:
 
 deploy:
   release: RutaHttpModule-v$(appveyor_build_version)
+  description: 'RUTA module for SSO IIS'
   provider: GitHub
-  
+  auth_token:
+    secure: 8T/Hl3dGYqGdE8zjaQNpklrJUCgm3QdMNnQxQvim17w+se7YUPxTeWH4qEMJyQCL
   draft: true
   prerelease: true
   on:
