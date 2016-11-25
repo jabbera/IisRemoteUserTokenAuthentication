@@ -1,4 +1,4 @@
-version: 1.0.{build}
+version: 0.0.{build}
 
 cache:
   - packages -> **\packages.config  # preserve "packages" directory in the root of build folder but will reset it if packages.config is modified
@@ -36,3 +36,4 @@ deploy:
   prerelease: true
   on:
     branch: master
+    appveyor_repo_tag: true
