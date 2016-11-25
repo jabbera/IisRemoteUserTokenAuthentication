@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Web;
@@ -9,6 +10,8 @@ namespace RutaHttpModule
     {
         private readonly IAdInteraction adInteraction;
         private readonly ISettings settings;
+        private TraceSource traceSource;
+
 
         [ExcludeFromCodeCoverage]
         public RutaModule()
@@ -31,6 +34,7 @@ namespace RutaHttpModule
         public void Init(HttpApplication application)
         {
             application.AuthorizeRequest += AuthorizeRequest;
+            this.traceSource = new TraceSource(nameof(RutaHttpModule)); // Do I need to do this here? https://www.iis.net/learn/develop/runtime-extensibility/how-to-add-tracing-to-iis-managed-modules
         }
 
         [ExcludeFromCodeCoverage]
@@ -39,8 +43,22 @@ namespace RutaHttpModule
         [ExcludeFromCodeCoverage]
         private void AuthorizeRequest(object source, EventArgs e)
         {
-            HttpApplication application = (HttpApplication)source;
-            AuthorizeRequest(new RutaHttpContext(application.Context));
+            try
+            {
+                traceSource.TraceEvent(TraceEventType.Start, 0, $"[{nameof(RutaModule)} MODULE] START AuthorizeRequest");
+
+                HttpApplication application = (HttpApplication)source;
+                AuthorizeRequest(new RutaHttpContext(application.Context));
+            }
+            catch(Exception ex)
+            {
+                traceSource.TraceEvent(TraceEventType.Error, 0, $"[{nameof(RutaModule)} ERROR AuthorizeRequest: ExceptionData: '{ex}' ");
+                throw;
+            }
+            finally
+            {
+                traceSource.TraceEvent(TraceEventType.Stop, 0, $"[{nameof(RutaModule)} END AuthorizeRequest");
+            }
         }
 
         // Internal for testing purposes
