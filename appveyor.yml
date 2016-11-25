@@ -21,7 +21,7 @@ configuration: Release
 
 test: 
   assemblies:
-    - '**\RutaHttpModuleTest.dll'
+    - '**\RutaHest.dll'
   categories:
     except:
       - ActiveDirectoryRequired
