@@ -4,6 +4,12 @@ cache:
   - packages -> **\packages.config  # preserve "packages" directory in the root of build folder but will reset it if packages.config is modified
   - '%LocalAppData%\NuGet\Cache'
 
+skip_commits:
+  files:
+    - README.md
+    - LICENSE
+    - .gitignore
+
 image: Visual Studio 2015
   
 assembly_info:
