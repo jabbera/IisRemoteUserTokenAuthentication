@@ -2,6 +2,8 @@
 
 A Custom Http Handler that implements RUTA for: https://jira.sonarsource.com/browse/SONAR-5430, This will allow single sign on for windows active directory users. Note: This was previously supported by: https://github.com/SonarQubeCommunity/sonar-activedirectory however immediatly after development, that plugin was abandoned. 
 
+[![Build status](https://ci.appveyor.com/api/projects/status/n3cgxias5t3mfybr?svg=true)](https://ci.appveyor.com/project/jabbera/iisremoteusertokenauthentication)
+
 # Installation
 
 SonarQube scanners DO NOT support anything other then basic\token based authentication. Because of that you will need to setup 2 websites. The first is for the browser and supports single sign on. [WWWROOT_BROWSER] You will also need an unauthenticated one for supporting scanners [WWWROOT_SCANNER]. Please setup these websites ahead of time (ssl required) and make sure you can access index.html. DO NOT USE AN SNI based website for WWWROOT_SCANNER. Run it on a different port then 443. There is a bug that makes it unsupported. 

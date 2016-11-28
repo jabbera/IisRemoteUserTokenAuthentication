@@ -11,17 +11,24 @@ skip_commits:
     - .gitignore
 
 image: Visual Studio 2017 RC
-  
+ 
+environment:
+  SonarToken:
+    secure: JPhTIkoIcnnn4eMzibtWuJAK67oiN7QJy9H2K7zesrxbzI6AEpBLhGc9hUmAW8GY
+   
+before_build:
+  - ps: .\CopySonarTarget.ps1
+  - nuget restore
+  - cmd: SonarQubeScanner\SonarQube.Scanner.MSBuild.exe begin /k:"IisRemoteUserTokenAuthentication" /v:0.4 /d:"sonar.host.url=https://sonarqube.com" /d:"sonar.login=%SonarToken%"
+ 
 assembly_info:
   patch: true
   file: AssemblyInfo.*
   assembly_version: '{version}'
   assembly_file_version: '{version}'
   assembly_informational_version: '{version}-rc'
-  
-before_build:
-  - nuget restore
-  
+
+ 
 platform: Any CPU
 configuration: Release
 
@@ -32,8 +39,9 @@ test:
     except:
       - ActiveDirectoryRequired
       
-after_build:
+after_test:
   - 7z a RutaHttpModule.zip "%APPVEYOR_BUILD_FOLDER%\RutaHttpModule\bin\%CONFIGURATION%\*.dll" "%APPVEYOR_BUILD_FOLDER%\web-*.config" "%APPVEYOR_BUILD_FOLDER%\InstallRutaModule.ps1"
+  - cmd: SonarQubeScanner\SonarQube.Scanner.MSBuild.exe end /d:"sonar.login=%SonarToken%"
 
 artifacts:
   - path: RutaHttpModule.zip
