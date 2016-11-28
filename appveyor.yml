@@ -40,6 +40,7 @@ test:
       - ActiveDirectoryRequired
       
 after_test:
+  - vstest.console ".\RutaHttpModuleTest\bin\Release\RutaHttpModuleTest.dll" /logger:trx /TestCaseFilter:"TestCategory!=ActiveDirectoryRequired"
   - 7z a RutaHttpModule.zip "%APPVEYOR_BUILD_FOLDER%\RutaHttpModule\bin\%CONFIGURATION%\*.dll" "%APPVEYOR_BUILD_FOLDER%\web-*.config" "%APPVEYOR_BUILD_FOLDER%\InstallRutaModule.ps1"
   - cmd: SonarQubeScanner\SonarQube.Scanner.MSBuild.exe end /d:"sonar.login=%SonarToken%"
 
