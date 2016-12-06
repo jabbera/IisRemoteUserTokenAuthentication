@@ -8,18 +8,18 @@ A Custom Http Handler that implements RUTA for: https://jira.sonarsource.com/bro
 
 SonarQube scanners DO NOT support anything other then basic\token based authentication. Because of that you will need to setup 2 websites. The first is for the browser and supports single sign on. [WWWROOT_BROWSER] You will also need an unauthenticated one for supporting scanners [WWWROOT_SCANNER]. Please setup these websites ahead of time (ssl required) and make sure you can access index.html. DO NOT USE AN SNI based website for WWWROOT_SCANNER. Run it on a different port then 443. There is a bug that makes it unsupported. 
 
-Configure sonarqube for RUTA per: https://jira.sonarsource.com/browse/SONAR-5430 (If default settins are used all you should need to do is add: sonar.sso.enable=true to the sonar.properties file and restart sonarqube.)
+1) Configure sonarqube for RUTA per: https://jira.sonarsource.com/browse/SONAR-5430 (If default settings are used all you should need to do is add: sonar.web.sso.enable=true to the sonar.properties file and restart sonarqube.)
 
-1) Download the current release and extract to [EXTRACT_FOLDER]
+2) Download the current release and extract to [EXTRACT_FOLDER]
 
-2) Run: ConfigureServer.ps1
+3) Run: ConfigureServer.ps1
 `Note: This installs the following windows features: IIS-HttpRedirect, IIS-ASPNET45, IIS-WebServerManagementTools, IIS-HttpTracing, IIS-WindowsAuthentication, IIS-NetFxExtensibility45, IIS-ApplicationDevelopment. It unlocks the IIS module ordering system wide as well as the authentication module configuration. It also installs ARR and UrlRewrite server wide.`
 
-3) Copy: [EXTRACT_FOLDER]\web-user.config to: [WWWROOT_BROWSER]\web.config
+4) Copy: [EXTRACT_FOLDER]\web-user.config to: [WWWROOT_BROWSER]\web.config
 
-4) Copy: [EXTRACT_FOLDER]\\*.dll to: [WWWROOT_BROWSER]\bin\
+5) Copy: [EXTRACT_FOLDER]\\*.dll to: [WWWROOT_BROWSER]\bin\
 
-5) Browse to https://[WWWROOT_BROWSER_URL] You should hopefully be signed in.
+6) Browse to https://[WWWROOT_BROWSER_URL] You should hopefully be signed in.
 
 `Note: This configuration assumes sonarqube is running on the same server as IIS on port 9000. If this is not correct you will need to edit the reverse proxy rules in the web.config file to match your configuration.`
 
