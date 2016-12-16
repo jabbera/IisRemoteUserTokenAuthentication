@@ -19,14 +19,14 @@ environment:
 before_build:
   - ps: .\CopySonarTarget.ps1
   - nuget restore
-  - cmd: if defined SonarToken (SonarQubeScanner\SonarQube.Scanner.MSBuild.exe begin /k:"IisRemoteUserTokenAuthentication" /v:0.4 /d:"sonar.host.url=https://sonarqube.com" /d:"sonar.login=%SonarToken%")
+  - cmd: if defined SonarToken (SonarQubeScanner\SonarQube.Scanner.MSBuild.exe begin /k:"IisRemoteUserTokenAuthentication" /v:0.4 /d:"sonar.host.url=https://sonarqube.com" /d:"sonar.login=%SonarToken%" /d:"sonar.verbose=true")
  
 assembly_info:
   patch: true
   file: AssemblyInfo.*
-  assembly_version: '{version}'
+  assembly_version: '{version}' 
   assembly_file_version: '{version}'
-  assembly_informational_version: '{version}-rc'
+  assembly_informational_version: '$(APPVEYOR_REPO_COMMIT)-rc'
 
  
 platform: Any CPU
@@ -41,7 +41,15 @@ test:
       
 after_test:
   - vstest.console ".\RutaHttpModuleTest\bin\Release\RutaHttpModuleTest.dll" /logger:trx /TestCaseFilter:"TestCategory!=ActiveDirectoryRequired"
-  - 7z a RutaHttpModule.zip "%APPVEYOR_BUILD_FOLDER%\RutaHttpModule\bin\%CONFIGURATION%\*.dll" "%APPVEYOR_BUILD_FOLDER%\web-*.config" "%APPVEYOR_BUILD_FOLDER%\InstallRutaModule.ps1"
+  - cmd: mkdir "%APPVEYOR_BUILD_FOLDER%\Staging"
+  - cmd: mkdir "%APPVEYOR_BUILD_FOLDER%\Staging\inetpub-user"
+  - cmd: mkdir "%APPVEYOR_BUILD_FOLDER%\Staging\inetpub-user\bin"
+  - cmd: mkdir "%APPVEYOR_BUILD_FOLDER%\Staging\inetpub-scanner"
+  - cmd: copy  "%APPVEYOR_BUILD_FOLDER%\web-user.config" "%APPVEYOR_BUILD_FOLDER%\Staging\inetpub-user\web.config"
+  - cmd: copy  "%APPVEYOR_BUILD_FOLDER%\RutaHttpModule\bin\%CONFIGURATION%\*.dll" "%APPVEYOR_BUILD_FOLDER%\Staging\inetpub-user\bin\"
+  - cmd: copy  "%APPVEYOR_BUILD_FOLDER%\web-scanner.config" "%APPVEYOR_BUILD_FOLDER%\Staging\inetpub-scanner\web.config"
+  - cmd: copy  "%APPVEYOR_BUILD_FOLDER%\ConfigureServer.ps1" "%APPVEYOR_BUILD_FOLDER%\Staging\ConfigureServer.ps1"
+  - 7z a RutaHttpModule.zip "%APPVEYOR_BUILD_FOLDER%\Staging\" 
   - cmd: if defined SonarToken (SonarQubeScanner\SonarQube.Scanner.MSBuild.exe end /d:"sonar.login=%SonarToken%")
 
 artifacts:
