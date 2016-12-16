@@ -19,7 +19,7 @@ environment:
 before_build:
   - ps: .\CopySonarTarget.ps1
   - nuget restore
-  - cmd: SonarQubeScanner\SonarQube.Scanner.MSBuild.exe begin /k:"IisRemoteUserTokenAuthentication" /v:0.4 /d:"sonar.host.url=https://sonarqube.com" /d:"sonar.login=%SonarToken%"
+  - cmd: if defined SonarToken (SonarQubeScanner\SonarQube.Scanner.MSBuild.exe begin /k:"IisRemoteUserTokenAuthentication" /v:0.4 /d:"sonar.host.url=https://sonarqube.com" /d:"sonar.login=%SonarToken%")
  
 assembly_info:
   patch: true
@@ -42,7 +42,7 @@ test:
 after_test:
   - vstest.console ".\RutaHttpModuleTest\bin\Release\RutaHttpModuleTest.dll" /logger:trx /TestCaseFilter:"TestCategory!=ActiveDirectoryRequired"
   - 7z a RutaHttpModule.zip "%APPVEYOR_BUILD_FOLDER%\RutaHttpModule\bin\%CONFIGURATION%\*.dll" "%APPVEYOR_BUILD_FOLDER%\web-*.config" "%APPVEYOR_BUILD_FOLDER%\InstallRutaModule.ps1"
-  - cmd: SonarQubeScanner\SonarQube.Scanner.MSBuild.exe end /d:"sonar.login=%SonarToken%"
+  - cmd: if defined SonarToken (SonarQubeScanner\SonarQube.Scanner.MSBuild.exe end /d:"sonar.login=%SonarToken%")
 
 artifacts:
   - path: RutaHttpModule.zip
