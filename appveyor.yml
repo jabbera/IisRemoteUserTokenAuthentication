@@ -50,9 +50,9 @@ after_test:
   - cmd: copy  "%APPVEYOR_BUILD_FOLDER%\RutaHttpModule\bin\%CONFIGURATION%\*.dll" "%APPVEYOR_BUILD_FOLDER%\Staging\inetpub-user\bin\"
   - cmd: copy  "%APPVEYOR_BUILD_FOLDER%\web-scanner.config" "%APPVEYOR_BUILD_FOLDER%\Staging\inetpub-scanner\web.config"
   - cmd: copy  "%APPVEYOR_BUILD_FOLDER%\ConfigureServer.ps1" "%APPVEYOR_BUILD_FOLDER%\Staging\ConfigureServer.ps1"
-  - 7z a RutaHttpModule.zip "%APPVEYOR_BUILD_FOLDER%\Staging\" 
+  - 7z a RutaHttpModule.zip "%APPVEYOR_BUILD_FOLDER%\Staging\*" 
   - cmd: copy  "%APPVEYOR_BUILD_FOLDER%\web-user-tokenized.config" "%APPVEYOR_BUILD_FOLDER%\Staging\inetpub-user\web.config"
-  - 7z a RutaHttpModule-Tokenized.zip "%APPVEYOR_BUILD_FOLDER%\Staging\" 
+  - 7z a RutaHttpModule-Tokenized.zip "%APPVEYOR_BUILD_FOLDER%\Staging\*" 
   - cmd: if defined SonarToken (SonarQubeScanner\SonarQube.Scanner.MSBuild.exe end /d:"sonar.login=%SonarToken%")
 
 artifacts:
