@@ -18,6 +18,7 @@ environment:
    
 before_build:
   - ps: .\CopySonarTarget.ps1
+  - ps: .\GenerateTokenizedConfig.ps1
   - nuget restore
   - cmd: if defined SonarToken (SonarQubeScanner\SonarQube.Scanner.MSBuild.exe begin /k:"IisRemoteUserTokenAuthentication" /v:0.4 /d:"sonar.host.url=https://sonarqube.com" /d:"sonar.login=%SonarToken%" /d:"sonar.verbose=true")
  
@@ -50,11 +51,15 @@ after_test:
   - cmd: copy  "%APPVEYOR_BUILD_FOLDER%\web-scanner.config" "%APPVEYOR_BUILD_FOLDER%\Staging\inetpub-scanner\web.config"
   - cmd: copy  "%APPVEYOR_BUILD_FOLDER%\ConfigureServer.ps1" "%APPVEYOR_BUILD_FOLDER%\Staging\ConfigureServer.ps1"
   - 7z a RutaHttpModule.zip "%APPVEYOR_BUILD_FOLDER%\Staging\" 
+  - cmd: copy  "%APPVEYOR_BUILD_FOLDER%\web-user-tokenized.config" "%APPVEYOR_BUILD_FOLDER%\Staging\inetpub-user\web.config"
+  - 7z a RutaHttpModule-Tokenized.zip "%APPVEYOR_BUILD_FOLDER%\Staging\" 
   - cmd: if defined SonarToken (SonarQubeScanner\SonarQube.Scanner.MSBuild.exe end /d:"sonar.login=%SonarToken%")
 
 artifacts:
   - path: RutaHttpModule.zip
     name: RutaHttpModule
+  - path: RutaHttpModule-Tokenized.zip
+    name: RutaHttpModule-Tokenized
 
 deploy:
   release: $(APPVEYOR_REPO_TAG_NAME)
