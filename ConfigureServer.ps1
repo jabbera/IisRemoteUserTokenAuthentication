@@ -16,7 +16,7 @@ Start-Process $webpi_download_path '/qn' -PassThru | Wait-Process
 cd 'C:/Program Files/Microsoft/Web Platform Installer'; .\WebpiCmd.exe /Install /Products:'UrlRewrite2,ARRv3_0' /AcceptEULA
 Set-WebConfiguration system.webServer/proxy -value @{ enabled = "true" }
 
- Get-WebConfiguration `
+Get-WebConfiguration `
  -pspath 'MACHINE/WEBROOT/APPHOST' `
  -filter "system.webServer/modules/add" -recurse | `
  where {$_.PSPath -eq 'MACHINE/WEBROOT/APPHOST' -and $_.Type -eq ''} `
@@ -24,7 +24,6 @@ Set-WebConfiguration system.webServer/proxy -value @{ enabled = "true" }
      $filter = "system.webServer/modules/add[@name='" + $_.Name + "']"     
      Remove-WebConfigurationLock  -filter $filter -verbose
  }
-
 
 & $env:windir\system32\inetsrv\appcmd unlock config /section:windowsAuthentication
 & $env:windir\system32\inetsrv\appcmd unlock config /section:anonymousAuthentication

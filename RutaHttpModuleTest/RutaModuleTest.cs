@@ -1,20 +1,15 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System;
+using System.Linq;
+
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using RutaHttpModule;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Principal;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RutaHttpModuleTest
 {
     [TestClass]
     public class RutaModuleTest
     {
-
-
         private RutaModule rutaModule;
         private Mock<ISettings> settings;
         private Mock<IAdInteraction> adInteraction;

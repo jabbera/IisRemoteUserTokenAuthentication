@@ -12,7 +12,6 @@ namespace RutaHttpModule
         private readonly ISettings settings;
         private TraceSource traceSource;
 
-
         [ExcludeFromCodeCoverage]
         public RutaModule()
             : this(new AdInteraction(), new SettingsWrapper())
