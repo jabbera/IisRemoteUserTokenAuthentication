@@ -1,9 +1,10 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Web;
-
-namespace RutaHttpModule
+﻿namespace RutaHttpModule
 {
+    using System;
+    using System.Diagnostics.CodeAnalysis;
+    using System.Security.Principal;
+    using System.Web;
+
     [ExcludeFromCodeCoverage]
     internal class RutaHttpContext : IRutaHttpContext
     {
@@ -11,6 +12,7 @@ namespace RutaHttpModule
 
         internal RutaHttpContext(HttpContext httpContext) => this.httpContext = httpContext ?? throw new ArgumentNullException(nameof(httpContext));
 
+        public bool IsWindowsUser => this.httpContext.User is WindowsPrincipal;
         public string DomainUserName => this.httpContext.User?.Identity?.Name;
         public bool IsAuthenticated => this.httpContext.User?.Identity?.IsAuthenticated ?? false;
 

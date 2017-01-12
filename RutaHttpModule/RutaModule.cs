@@ -28,7 +28,7 @@
         /// <summary>
         /// Reference to the tracing object.
         /// </summary>
-        private ITraceSource traceSource;
+        private readonly ITraceSource traceSource;
 
         /// <summary>
         /// Initializes a new instance of the a <see cref="RutaModule"/> object
@@ -49,13 +49,13 @@
         {
             this.adInteraction = adInteraction ?? throw new ArgumentNullException(nameof(adInteraction));
             this.settings = settings ?? throw new ArgumentNullException(nameof(settings));
-            this.traceSource = traceSource ?? throw new ArgumentException(nameof(traceSource));
+            this.traceSource = traceSource ?? throw new ArgumentNullException(nameof(traceSource));
         }
 
         /// <summary>
         /// The name of the module
         /// </summary>
-        public string ModuleName => "RutaModule";
+        public string ModuleName => nameof(RutaModule);
 
         /// <summary>
         /// Initializes a module and prepares it to handle requests (part of the <see cref="IHttpHandler"/> interface).
@@ -120,6 +120,12 @@
             if (!context.IsAuthenticated)
             {
                 traceSource.TraceEvent(TraceEventType.Information, 0, "Not authenticated");
+                return;
+            }
+
+            if (!context.IsWindowsUser)
+            {
+                traceSource.TraceEvent(TraceEventType.Information, 0, "Not a windows user");
                 return;
             }
 

@@ -11,5 +11,6 @@
         string AppendString { get; }
         string AdUserBaseDn { get; }
         string AdGroupBaseDn { get; }
+        string[] PassThruUserAgents { get; }
     }
 }
