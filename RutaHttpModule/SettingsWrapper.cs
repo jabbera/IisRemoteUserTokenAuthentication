@@ -7,8 +7,6 @@
     internal class SettingsWrapper : ISettings
     {
         private readonly string[] passThruUserAgents = Properties.Settings.Default.PassThruAgents.Cast<string>().ToArray();
-
-
         public string AdGroupBaseDn => Properties.Settings.Default.AdGroupBaseDn;
         public string AdUserBaseDn => Properties.Settings.Default.AdUserBaseDn;
         public bool DowncaseUsers => Properties.Settings.Default.DowncaseUsers;
