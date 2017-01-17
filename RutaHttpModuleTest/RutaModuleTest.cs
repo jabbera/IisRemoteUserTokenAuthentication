@@ -54,6 +54,20 @@
         }
 
         [TestMethod]
+        public void NotWindowsUserTest()
+        {
+            // Arrange
+            this.httpContext.SetupGet(x => x.IsWindowsUser).Returns(false);
+
+            // Act
+            this.rutaModule.HandleAuthorizeRequest(this.httpContext.Object);
+
+            // Assert
+            this.httpContext.Verify(x => x.RemoveRequestHeader(It.IsAny<string>()), Times.Never());
+            this.httpContext.Verify(x => x.AddRequestHeader(It.IsAny<string>(), It.IsAny<string>()), Times.Never());
+        }
+
+        [TestMethod]
         public void NoDomainUserNameTest()
         {
             // Arrange
@@ -368,12 +382,13 @@
 
         private void SetupNormalFlow()
         {
+            this.httpContext.SetupGet(x => x.IsWindowsUser).Returns(true);           
             this.httpContext.SetupGet(x => x.IsAuthenticated).Returns(true);
             this.httpContext.SetupGet(x => x.DomainUserName).Returns(login.loginValue);
 
             this.adInteraction.Setup(x => x.GetUserInformation(login.loginValue))
                               .Returns((login.loginValue, name.nameValue, email.emailValue, groups.groupsValue));
-
+            
             this.settings.SetupGet(x => x.LoginHeader).Returns(this.login.header);
             this.settings.SetupGet(x => x.NameHeader).Returns(this.name.header);
             this.settings.SetupGet(x => x.EmailHeader).Returns(this.email.header);
