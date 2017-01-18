@@ -68,6 +68,21 @@
         }
 
         [TestMethod]
+        public void SetWhenUserAgentOnWhitespaceTest()
+        {
+            this.httpContext.SetupProperty(x => x.User);
+            string agentName = string.Empty;
+
+            this.httpContext.SetupGet(x => x.UserAgent).Returns(agentName);
+            this.settings.SetupGet(x => x.PassThruUserAgents).Returns(new string[0]);
+
+            this.sonarAuthPassthroughModule.HandleAuthenticateRequest(httpContext.Object);
+
+            this.httpContext.VerifySet(x => x.SkipAuthorization = true, Times.Once());
+            Assert.IsTrue(this.httpContext.Object.User.Identity.IsAuthenticated);
+        }
+
+        [TestMethod]
         public void DontSetWhenUserAgentMatchesTest()
         {
             string agentName = "MATCHME";

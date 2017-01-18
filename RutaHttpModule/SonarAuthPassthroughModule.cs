@@ -100,17 +100,20 @@ namespace RutaHttpModule
             // This is most efficent.
             if (context.HasTokenHeader)
             {
+                traceSource.TraceEvent(TraceEventType.Information, 0, "Found token.");
                 AssignPassThruUser(context);
+                return;
             }
 
             // If we have no agent, or the agent does not match any of our pass thrus
             string userAgent = context.UserAgent;
-            if (string.IsNullOrWhiteSpace(userAgent) || !this.settings.PassThruUserAgents.Any(userAgent.StartsWith))
-            {
-                return;
-            }
+            traceSource.TraceEvent(TraceEventType.Information, 0, $"UserAgent: '{userAgent}'");
 
-            AssignPassThruUser(context); 
+            if (string.IsNullOrWhiteSpace(userAgent) || this.settings.PassThruUserAgents.Any(userAgent.StartsWith))
+            {
+                AssignPassThruUser(context);
+                return;
+            }            
         }
 
         private void AssignPassThruUser(ISonarAuthPassthroughHttpContext context)
