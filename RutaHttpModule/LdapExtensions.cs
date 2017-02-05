@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.DirectoryServices;
-using System.DirectoryServices.AccountManagement;
-using System.DirectoryServices.ActiveDirectory;
-
-namespace RutaHttpModule
+﻿namespace RutaHttpModule
 {
+    using System;
+    using System.Collections.Generic;
+    using System.DirectoryServices;
+    using System.DirectoryServices.AccountManagement;
+    using System.DirectoryServices.ActiveDirectory;
+
     /// This monstrosity exists because <see cref="UserPrincipal.GetAuthorizationGroups"/> is so slow. (20+ seconds)
     internal static class LdapExtensions
     {

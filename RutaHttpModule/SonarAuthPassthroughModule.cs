@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Security.Principal;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web;
-
-namespace RutaHttpModule
+﻿namespace RutaHttpModule
 {
+    using System;
+    using System.Diagnostics;
+    using System.Diagnostics.CodeAnalysis;
+    using System.Linq;
+    using System.Security.Principal;
+    using System.Web;
+
     /// <summary>
     /// The goal of this class is to determine which traffic is from a sonar scanner\lint and allow it to pass through since it's likely 
     /// using token based auth and\or accesssing an unrestricted endpoint.
@@ -148,6 +145,4 @@ namespace RutaHttpModule
             }
         }
     }
-
-    
 }
