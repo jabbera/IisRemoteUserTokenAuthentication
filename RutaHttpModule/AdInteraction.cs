@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.DirectoryServices.AccountManagement;
-using System.Linq;
-
-namespace RutaHttpModule
+﻿namespace RutaHttpModule
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
+    using System.DirectoryServices.AccountManagement;
+    using System.Linq;
+
     internal class AdInteraction : IAdInteraction
     {        
         private readonly ISettings settings;
