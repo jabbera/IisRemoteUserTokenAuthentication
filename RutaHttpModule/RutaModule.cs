@@ -1,4 +1,6 @@
-﻿namespace RutaHttpModule
+﻿using System.Collections.Concurrent;
+
+namespace RutaHttpModule
 {
     using System;
     using System.Diagnostics;
@@ -29,6 +31,9 @@
         /// Reference to the tracing object.
         /// </summary>
         private readonly ITraceSource traceSource;
+
+        private readonly ConcurrentDictionary<string, (string login, string name, string email, string[] groups)> cache =
+            new ConcurrentDictionary<string, (string login, string name, string email, string[] groups)>();
 
         /// <summary>
         /// Initializes a new instance of the a <see cref="RutaModule"/> object
@@ -135,28 +140,55 @@
                 traceSource.TraceEvent(TraceEventType.Information, 0, "No username in context");
                 return;
             }
-            
-            var userInformation = this.adInteraction.GetUserInformation(userName);
-            if (string.IsNullOrWhiteSpace(userInformation.login))
+
+            (string loginToSend, string name, string email, string[] groupsToSend) = this.GetUserInformation(userName);
+            if (loginToSend == null || name == null || email == null)
             {
-                traceSource.TraceEvent(TraceEventType.Information, 0, "No user information in context");
+                traceSource.TraceEvent(TraceEventType.Information, 0, "No data available");
                 return;
+            }
+
+            if (groupsToSend == null)
+            {
+                groupsToSend = new string[0];
             }
 
             traceSource.TraceEvent(TraceEventType.Information, 0, "Set headers");
 
-            string loginToSend = ApplyUserSettings(userInformation.login);
-            string[] groupsToSend = userInformation.groups.Where(group => !string.IsNullOrWhiteSpace(group))
-                                                          .Select(ApplyGroupSettings)
-                                                          .ToArray();
-
             context.RemoveRequestHeader("Authorization"); // Remove the authorzation header since we are in charge of authentication
             context.AddRequestHeader(this.settings.LoginHeader, loginToSend);
-            context.AddRequestHeader(this.settings.NameHeader, userInformation.name);
-            context.AddRequestHeader(this.settings.EmailHeader, userInformation.email);
+            context.AddRequestHeader(this.settings.NameHeader, name);
+            context.AddRequestHeader(this.settings.EmailHeader, email);
             context.AddRequestHeader(this.settings.GroupsHeader, string.Join(",", groupsToSend));
         }
 
+        private (string login, string name, string email, string[] groups) GetUserInformation(string userName)
+        {
+            if (this.cache.TryGetValue(userName, out var cachedValues))
+            {
+                traceSource.TraceEvent(TraceEventType.Information, 0, "Returning cached data.");
+                return cachedValues;
+            }
+
+            var userInformation = this.adInteraction.GetUserInformation(userName);
+            if (string.IsNullOrWhiteSpace(userInformation.login))
+            {
+                traceSource.TraceEvent(TraceEventType.Information, 0, "No user information in context");
+                return (null, null, null, null);
+            }
+
+            traceSource.TraceEvent(TraceEventType.Information, 0, "Bulding header results and caching");
+
+            string loginToSend = ApplyUserSettings(userInformation.login);
+            string[] groupsToSend = userInformation.groups.Where(group => !string.IsNullOrWhiteSpace(group))
+                .Select(ApplyGroupSettings)
+                .ToArray();
+
+            this.cache.TryAdd(userName, (loginToSend, userInformation.name, userInformation.email, groupsToSend));
+
+            return (loginToSend, userInformation.name, userInformation.email, groupsToSend);
+        }
+        
         /// <summary>
         /// Returns a copy of the <paramref name="group"/> object adjusted as necessary based on 
         /// the settings (DowncaseGroups and AppendString).
@@ -181,19 +213,11 @@
         /// </summary>
         /// <param name="source">A <see cref="String"/> on which the action should be performed.</param>
         /// <returns>The modified version of <paramref name="source"/>.</returns>
-        private string AppendIfNeeded(string source)
-        {
-            if (string.IsNullOrWhiteSpace(this.settings.AppendString))
-            {
-                return source;
-            }
-
-            return $"{source}{this.settings.AppendString}";
-        }
+        private string AppendIfNeeded(string source) => string.IsNullOrWhiteSpace(this.settings.AppendString) ? source : $"{source}{this.settings.AppendString}";
 
         /// <summary>
         /// Returns a copy of the <paramref name="source"/> object converted to lowercase 
-        /// using the casing rules of the invariant culture if indicated by <paramref name="applyDowncase"/>. 
+        /// using the casing rules of the invariant culture if indicated by <paramref name="applyLowercase"/>. 
         /// In all other cases <paramref name="source"/> will be returned.
         /// </summary>
         /// <param name="source">A <see cref="String"/> on which the action should be performed.</param>
