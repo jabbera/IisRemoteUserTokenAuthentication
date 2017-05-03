@@ -24,24 +24,21 @@
 
             string usernameOnly = domainUsername.RemoveDomain();
 
-            string login = null, name = null, email = null;
-            string[] groups = null;
-
             using (PrincipalContext context = new PrincipalContext(ContextType.Domain))
             using (UserPrincipal user = UserPrincipal.FindByIdentity(context, IdentityType.SamAccountName, usernameOnly))
             {
                 if (user?.DistinguishedName.EndsWith(this.settings.AdUserBaseDn, StringComparison.OrdinalIgnoreCase) != true)
                 {
-                    return (login, name, email, groups);
+                    return (null, null, null, null);
                 }
 
-                login = usernameOnly;
-                name = user.Name;
-                email = user.EmailAddress;
-                groups = user.GetGroupsFast(this.settings.AdUserBaseDn, this.settings.AdGroupBaseDn).ToArray();
-            }
+                string login = usernameOnly;
+                string name = user.Name;
+                string email = user.EmailAddress;
+                string[] groups = user.GetGroupsFast(this.settings.AdUserBaseDn, this.settings.AdGroupBaseDn).ToArray();
 
-            return (login, name, email, groups);
+                return (login, name, email, groups);
+            }
         }
     }
 }
