@@ -34,6 +34,7 @@
 &lt;ArrayOfString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
   &lt;string&gt;sonar.scanner.app&lt;/string&gt;
   &lt;string&gt;SonarQubeScanner&lt;/string&gt;
+  &lt;string&gt;ScannerCli&lt;/string&gt;
 &lt;/ArrayOfString&gt;</Value>
     </Setting>
   </Settings>
