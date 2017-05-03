@@ -10,7 +10,7 @@ skip_commits:
     - LICENSE
     - .gitignore
 
-image: Visual Studio 2017 RC
+image: Visual Studio 2017
  
 environment:
   SonarToken:
