@@ -147,6 +147,27 @@
         }
 
         [TestMethod]
+        public void CacheFlowTest()
+        {
+            // Arrange
+            this.SetupNormalFlow();
+
+            // Act
+            this.rutaModule.HandleAuthorizeRequest(this.httpContext.Object);
+            this.rutaModule.HandleAuthorizeRequest(this.httpContext.Object);
+
+            // Assert
+            this.adInteraction.Verify(x => x.GetUserInformation(It.IsAny<string>()), Times.Once());
+
+            this.httpContext.Verify(x => x.RemoveRequestHeader("Authorization"), Times.Exactly(2));
+            this.httpContext.Verify(x => x.AddRequestHeader(this.login.header, login.loginValue), Times.Exactly(2));
+            this.httpContext.Verify(x => x.AddRequestHeader(this.name.header, name.nameValue), Times.Exactly(2));
+            this.httpContext.Verify(x => x.AddRequestHeader(this.email.header, email.emailValue), Times.Exactly(2));
+            this.httpContext.Verify(x => x.AddRequestHeader(this.groups.header, string.Join(",", groups.groupsValue)), Times.Exactly(2));
+
+        }
+
+        [TestMethod]
         public void AppendStringUserTest()
         {
             // Arrange
