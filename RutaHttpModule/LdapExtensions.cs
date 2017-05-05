@@ -13,7 +13,7 @@
         private const string ADAttribute_CommonName = "cn";
         private const string LDAPPathPrefix = "LDAP://";
 
-        internal static IEnumerable<string> GetGroupsFast(this UserPrincipal user, string userContainer, string groupsContainer)
+        internal static IEnumerable<string> GetGroupsFast(this UserPrincipal user, string groupsContainer)
         {
             if (user == null) throw new ArgumentNullException(nameof(user));
 

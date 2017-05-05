@@ -35,7 +35,7 @@
                 string login = usernameOnly;
                 string name = user.Name;
                 string email = user.EmailAddress;
-                string[] groups = user.GetGroupsFast(this.settings.AdUserBaseDn, this.settings.AdGroupBaseDn).ToArray();
+                string[] groups = user.GetGroupsFast(this.settings.AdGroupBaseDn).ToArray();
 
                 return (login, name, email, groups);
             }
