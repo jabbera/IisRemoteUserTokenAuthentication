@@ -75,9 +75,6 @@ namespace RutaHttpModuleTest
         {
             var result = this.adInteraction.GetUserInformation(WindowsIdentity.GetCurrent().Name);
 
-            Assert.IsTrue(WindowsIdentity.GetCurrent().Name.EndsWith(result.login, StringComparison.Ordinal));
-            Assert.IsNotNull(result.name);
-            Assert.IsTrue(emailRegex.IsMatch(result.email));
             CollectionAssert.DoesNotContain(result.groups.ToArray(), "Domain Users");
         }
 
