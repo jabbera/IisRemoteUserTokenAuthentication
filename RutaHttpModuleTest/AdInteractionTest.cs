@@ -23,7 +23,7 @@ namespace RutaHttpModuleTest
         {
             this.settings = new Mock<ISettings>();
             this.settings.SetupGet(x => x.AdGroupBaseDn).Returns(string.Empty);
-            this.settings.SetupGet(x => x.AdUserBaseDn).Returns(string.Empty);
+            this.settings.SetupGet(x => x.AdUserBaseDns).Returns(new string[0]);
             this.settings.SetupGet(x => x.DowncaseUsers).Returns(true);
             this.settings.SetupGet(x => x.DowncaseGroups).Returns(true);
             this.settings.SetupGet(x => x.AppendString).Returns(string.Empty);
@@ -81,7 +81,7 @@ namespace RutaHttpModuleTest
         [TestMethod]
         public void UserDnFilterTest()
         {
-            this.settings.SetupGet(x => x.AdUserBaseDn).Returns("DON'T MATCH");
+            this.settings.SetupGet(x => x.AdUserBaseDns).Returns(new[] {"DON'T MATCH"});
             var result = this.adInteraction.GetUserInformation(WindowsIdentity.GetCurrent().Name);
 
             Assert.IsNull(result.login);
