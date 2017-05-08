@@ -27,7 +27,7 @@
             using (PrincipalContext context = new PrincipalContext(ContextType.Domain))
             using (UserPrincipal user = UserPrincipal.FindByIdentity(context, IdentityType.SamAccountName, usernameOnly))
             {
-                if (user?.DistinguishedName.EndsWith(this.settings.AdUserBaseDn, StringComparison.OrdinalIgnoreCase) != true)
+                if (user == null || !MatchesOneUserDn(user.DistinguishedName))
                 {
                     return (null, null, null, null);
                 }
@@ -39,6 +39,16 @@
 
                 return (login, name, email, groups);
             }
+        }
+
+        private bool MatchesOneUserDn(string userDn)
+        {
+            if (this.settings.AdUserBaseDns.Length == 0)
+            {
+                return true;
+            }
+
+            return this.settings.AdUserBaseDns.Any(x => userDn.EndsWith(x, StringComparison.OrdinalIgnoreCase));
         }
     }
 }

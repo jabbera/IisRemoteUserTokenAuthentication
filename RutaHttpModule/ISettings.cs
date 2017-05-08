@@ -9,7 +9,7 @@
         bool DowncaseUsers { get; }
         bool DowncaseGroups { get; }
         string AppendString { get; }
-        string AdUserBaseDn { get; }
+        string[] AdUserBaseDns { get; }
         string AdGroupBaseDn { get; }
         string[] PassThruUserAgents { get; }
     }
