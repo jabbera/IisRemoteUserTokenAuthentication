@@ -17,10 +17,9 @@ environment:
     secure: JPhTIkoIcnnn4eMzibtWuJAK67oiN7QJy9H2K7zesrxbzI6AEpBLhGc9hUmAW8GY
    
 before_build:
-  - ps: .\CopySonarTarget.ps1
   - ps: .\GenerateTokenizedConfig.ps1
   - nuget restore
-  - cmd: if defined SonarToken (SonarQubeScanner\SonarQube.Scanner.MSBuild.exe begin /k:"IisRemoteUserTokenAuthentication" /v:0.4 /d:"sonar.host.url=https://sonarqube.com" /d:"sonar.login=%SonarToken%" /d:"sonar.verbose=true")
+  - cmd: if defined SonarToken (SonarQubeScanner\SonarQube.Scanner.MSBuild.exe begin /k:"IisRemoteUserTokenAuthentication" /v:0.20 /d:"sonar.host.url=https://sonarqube.com" /d:"sonar.login=%SonarToken%" /d:"sonar.verbose=true")
  
 assembly_info:
   patch: true

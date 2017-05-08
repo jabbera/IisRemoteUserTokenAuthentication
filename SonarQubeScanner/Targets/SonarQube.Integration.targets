@@ -44,7 +44,7 @@
     type as follows:
 
     1) Projects whose full project file name matches the regular expression specified in
-        the analysis setting "sonar.cs.msbuild.testProjectPattern" will be treated as test
+        the analysis setting "sonar.msbuild.testProjectPattern" will be treated as test
         projects. This setting is set via the SonarQube portal (set "Test project pattern"
         in the per-project settings on the MSBuild tab for the C# plug-in).
 
@@ -183,7 +183,7 @@
     <ItemGroup Condition="('$(SQAnalysisFileItemTypes)' != '')">
       <SonarQubeAnalysisFileItems Include="$(SQAnalysisFileItemTypes)" />
       <SonarQubeAnalysisFiles Include="@(%(SonarQubeAnalysisFileItems.Identity))" />
-      <SonarQubeAnalysisFiles Remove="@(SonarQubeAnalysisFiles)" Condition=" %(SonarQubeAnalysisFiles.SonarQubeExclude) == 'true' OR %(SonarQubeAnalysisFiles.AutoGen) == 'true' " />
+      <SonarQubeAnalysisFiles Remove="@(SonarQubeAnalysisFiles)" Condition=" %(SonarQubeAnalysisFiles.SonarQubeExclude) == 'true' OR %(SonarQubeAnalysisFiles.AutoGen) == 'true' OR %(SonarQubeAnalysisFiles.FullPath) == '$(TargetFrameworkMonikerAssemblyAttributesPath)'" />
     </ItemGroup>
 
     <!-- Exclude items under the intermediate output folder e.g. XAML files that are auto-generated on build -->
@@ -205,6 +205,19 @@
     </PropertyGroup>
   </Target>
 
+  <Target Name="CleanProjectFolders" AfterTargets="Clean" Condition=" $(SonarQubeTempPath) != '' ">
+    <ItemGroup>
+      <ProjectSpecificOutFiles Include="$(SonarQubeOutputPath)\$(MSBuildProjectName)_*\*.*"/>
+      <ProjectSpecificOutDirs Include="@(ProjectSpecificOutFiles->'%(RootDir)%(Directory)'->Distinct())" />
+      <ProjectSpecificConfFiles Include="$(SonarQubeConfigPath)\$(MSBuildProjectName)_*\*.*"/>
+      <ProjectSpecificConfDirs Include="@(ProjectSpecificConfFiles->'%(RootDir)%(Directory)'->Distinct())" />
+    </ItemGroup>
+
+    <Delete Files="@(ProjectSpecificOutFiles)" />
+    <Delete Files="@(ProjectSpecificConfFiles)" />
+    <RemoveDir Directories="@(ProjectSpecificOutDirs)" />
+    <RemoveDir Directories="@(ProjectSpecificConfDirs)" />
+  </Target>
 
   <Target Name="CreateProjectSpecificDirs" BeforeTargets="OverrideRoslynCodeAnalysisProperties;WriteSonarQubeProjectData"  Condition=" $(SonarQubeTempPath) != '' ">
     <!-- **************************************************************************** -->
@@ -212,7 +225,7 @@
 
     <!-- Calculate a project-specific directory names for conf and out -->
     <PropertyGroup>
-      <FolderDisambiguator Condition=" $(FolderDisambiguator)=='' ">_$(Platform)_$(Configuration)_$([System.DateTime]::Now.ToString("ffff"))</FolderDisambiguator>
+      <FolderDisambiguator Condition=" $(FolderDisambiguator)=='' ">_$([System.DateTime]::Now.ToString("ffff"))</FolderDisambiguator>
       <ProjectSpecificOutDir>$(SonarQubeOutputPath)\$(MSBuildProjectName)$(FolderDisambiguator)</ProjectSpecificOutDir>
       <ProjectSpecificConfDir>$(SonarQubeConfigPath)\$(MSBuildProjectName)$(FolderDisambiguator)</ProjectSpecificConfDir>
     </PropertyGroup>
@@ -265,11 +278,13 @@
        FullProjectPath="$(MSBuildProjectFullPath)"
        ProjectLanguage="$(Language)"
        ProjectGuid="$(ProjectGuid)"
+       SolutionConfigurationContents="$(CurrentSolutionConfigurationContents)"
        IsTest="$(SonarQubeTestProject)"
        IsExcluded="$(SonarQubeExclude)"
        AnalysisResults="@(AnalysisResults)"
        AnalysisSettings="@(SonarQubeSetting)"
-       OutputFolder="$(ProjectSpecificOutDir)" />
+       OutputFolder="$(ProjectSpecificOutDir)"
+       CodePage="$(CodePage)"/>
   </Target>
 
   <!-- **************************************************************************** -->
