@@ -7,13 +7,18 @@
       <setting name="DowncaseGroups" serializeAs="String" xdt:Transform="Replace" xdt:Locator="Match(name)">
         <value>__DowncaseGroups__</value>
       </setting>
-	  <setting name="AppendString" serializeAs="String" xdt:Transform="Replace" xdt:Locator="Match(name)">
+    <setting name="AppendString" serializeAs="String" xdt:Transform="Replace" xdt:Locator="Match(name)">
         <value>__AppendString__</value>
       </setting>
-	  <setting name="AdUserBaseDn" serializeAs="String" xdt:Transform="Replace" xdt:Locator="Match(name)">
-        <value>__AdUserBaseDn__</value>
+    <setting name="AdUserBaseDns" serializeAs="String" xdt:Transform="Replace" xdt:Locator="Match(name)">
+      <value>
+        <ArrayOfString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                       xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+          <string>__AdUserBaseDn__</string>
+        </ArrayOfString>
+      </value>
       </setting>
-	  <setting name="AdGroupBaseDn" serializeAs="String" xdt:Transform="Replace" xdt:Locator="Match(name)">
+    <setting name="AdGroupBaseDn" serializeAs="String" xdt:Transform="Replace" xdt:Locator="Match(name)">
         <value>__AdGroupBaseDn__</value>
       </setting>
     </RutaHttpModule.Properties.Settings>
