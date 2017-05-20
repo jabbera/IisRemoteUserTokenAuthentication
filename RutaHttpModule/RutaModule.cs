@@ -158,8 +158,15 @@ namespace RutaHttpModule
             context.RemoveRequestHeader("Authorization"); // Remove the authorzation header since we are in charge of authentication
             context.AddRequestHeader(this.settings.LoginHeader, loginToSend);
             context.AddRequestHeader(this.settings.NameHeader, name);
-            context.AddRequestHeader(this.settings.EmailHeader, email);
-            context.AddRequestHeader(this.settings.GroupsHeader, string.Join(",", groupsToSend));
+            if (!string.IsNullOrWhiteSpace(email))
+            {
+                context.AddRequestHeader(this.settings.EmailHeader, email);
+            }
+            
+            if (groupsToSend?.Length > 0)
+            {
+                context.AddRequestHeader(this.settings.GroupsHeader, string.Join(",", groupsToSend));
+            }
         }
 
         private (string login, string name, string email, string[] groups) GetUserInformation(string userName)
