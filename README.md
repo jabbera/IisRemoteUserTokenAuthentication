@@ -9,8 +9,8 @@ A Custom Http Handler that implements RUTA for: https://jira.sonarsource.com/bro
 SonarQube scanners DO NOT support anything other then basic\token based authentication. I've created a module that attempts to detect when the connecting application is a scanner or includes a token. When a scanner is detected the module will then bypass the windows authentication process. Right now the bypass conditions are:
 *  If there is an Authorization header with Basic auth
     * this indicates a token is present
-*  If the user agent of the request starts with any of the agent strings listed in the web.config setting: PassThruAgents
-    *  Initial configuration: sonar.scanner.app, SonarQubeScanner
+*  If the user agent of the request starts with any of the case-sensitive agent strings listed in the web.config setting: PassThruAgents
+    *  Initial configuration: sonar.scanner.app, SonarQubeScanner, ScannerCli, ScannerCLI, ScannerMSBuild, ScannerAzureDevOps
 
 I've only tested this with the MsBuild scanner so the agent list may need to be expanded. 
 
